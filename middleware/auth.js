@@ -1,13 +1,16 @@
 import jwt from "jsonwebtoken";
 
 export default function(req,res,next){
-    const token = req.header("Authorization");
-    if(!token){
+    const header = req.header("Authorization");
+    if(!header){
         res.status(401).json({message: "No token, authorization denied"})
     }
+
+    const token = header.replace("Bearer ", "");
+
     
     try {
-        const decoded = jwt.verify(token,process.env.JWR_SECRET);
+        const decoded = jwt.verify(token,process.env.JWT_SECRET);
         req.user = decoded.id;
         next();
     } catch (error) {
